@@ -23,7 +23,7 @@ const NetworkScanner: React.FC = () => {
   const [scanStats, setScanStats] = useState<ScanStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filterText, setFilterText] = useState<string>('');
-
+  const [isSecondRun, setIsSecondRun] = useState<boolean>(false);
   // Mock function to simulate scanning the network
   // In a real app, replace with actual API calls to your backend
   const scanNetwork = async () => {
@@ -39,49 +39,64 @@ const NetworkScanner: React.FC = () => {
         {
           uuid: '1',
           ipAddress: '192.168.1.1',
-          macAddress: '00:1A:2B:3C:4D:5E',
-          hostname: 'router.local',
-          vendorName:'Iphone',
+          macAddress: '00:1C:42:2E:60:4A',
+          hostname: 'router.home',
+          vendorName: 'Netgear',
           isOnline: true,
           lastSeen: new Date().toISOString(),
         },
         {
           uuid: '2',
-          ipAddress: '192.168.1.2',
-          macAddress: '00:2B:3C:4D:5E:6F',
-          hostname: 'desktop-pc.local',
-          vendorName:'Desktop',
+          ipAddress: '192.168.1.100',
+          macAddress: '3C:5A:B4:26:1F:20',
+          hostname: 'desktop.local',
+          vendorName: 'Dell Inc.',
           isOnline: true,
           lastSeen: new Date().toISOString(),
         },
         {
           uuid: '3',
-          ipAddress: '192.168.1.3',
-          macAddress: '00:3C:4D:5E:6F:7G',
-          hostname: 'laptop.local',
-          vendorName:'Laptop',
+          ipAddress: '192.168.1.101',
+          macAddress: '9C:2A:70:3E:89:45',
+          hostname: 'macbook.local',
+          vendorName: 'Apple Inc.',
           isOnline: true,
           lastSeen: new Date().toISOString(),
         },
         {
           uuid: '4',
-          ipAddress: '192.168.1.4',
-          macAddress: '00:4D:5E:6F:7G:8H',
-          hostname: 'smartphone.local',
+          ipAddress: '192.168.1.102',
+          macAddress: '74:E5:43:12:23:B9',
+          hostname: 'pixel7.local',
+          vendorName: 'Google',
           isOnline: false,
           lastSeen: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
         },
         {
           uuid: '5',
-          ipAddress: '192.168.1.5',
-          macAddress: '00:5E:6F:7G:8H:9I',
-          hostname: 'iot-device.local',
+          ipAddress: '192.168.1.103',
+          macAddress: 'B8:27:EB:45:12:78',
+          hostname: 'raspberrypi.local',
+          vendorName: 'Raspberry Pi',
           isOnline: true,
           lastSeen: new Date().toISOString(),
         },
+        ...(isSecondRun
+          ? [
+              {
+                uuid: '6',
+                ipAddress: '192.168.1.104',
+                macAddress: '02:42:AC:11:00:0A',
+                hostname: 'esp32-sensor.local',
+                vendorName: 'Espressif Inc.',
+                isOnline: true,
+                lastSeen: new Date().toISOString(),
+              },
+            ]
+          : []),
       ];
-      
       setDevices(mockDevices);
+      setIsSecondRun(true);
       setScanStats({
         startTime: new Date().toISOString(),
         duration: 2.1,

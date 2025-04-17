@@ -1,12 +1,13 @@
-
-
 import React, { useState } from 'react';
+import useSignUp from '../hooks/SignUp';
+import { Link } from "react-router-dom";
 
 interface SignUpFormData {
-  firstName: string,
-  lastName: string,
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  phoneNumber: string;
 }
 
 const SignUpPage: React.FC = () => {
@@ -15,17 +16,31 @@ const SignUpPage: React.FC = () => {
     lastName: '',
     email: '',
     password: '',
+    phoneNumber: '',
   });
+
+  const { signUp, loading, error, response } = useSignUp();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+  
+  const formatPhoneToE164 = (phone: string): string => {
+    const digits = phone.replace(/\D/g, '');
+    return `+1${digits}`;
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Submitted data:', formData);
-    // Add your signup logic here
+
+    signUp({
+      email: formData.email,
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      phone_number: formatPhoneToE164(formData.phoneNumber),
+      password: formData.password,
+    });
   };
 
   return (
@@ -41,14 +56,12 @@ const SignUpPage: React.FC = () => {
           onChange={handleChange}
           required
         />
-         <input
+        <input
           className="w-full mb-4 p-2 border rounded"
           type="text"
-          name="
-          lastName"
+          name="lastName"
           placeholder="Last Name"
-          value={formData.lastName
-          }
+          value={formData.lastName}
           onChange={handleChange}
           required
         />
@@ -63,6 +76,15 @@ const SignUpPage: React.FC = () => {
         />
         <input
           className="w-full mb-4 p-2 border rounded"
+          type="tel"
+          name="phoneNumber"
+          placeholder="Phone Number"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          required
+        />
+        <input
+          className="w-full mb-4 p-2 border rounded"
           type="password"
           name="password"
           placeholder="Password"
@@ -70,12 +92,19 @@ const SignUpPage: React.FC = () => {
           onChange={handleChange}
           required
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+        <Link
+             to="/networks"
+             className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition"
+
         >
-          Sign Up
-        </button>
+          <button
+          type="submit"
+           disabled={loading}>
+          {loading ? 'Registering...' : 'Sign Up'}
+          </button>
+        </Link>
+        {error && <p className="text-red-500 mt-2">{error.message}</p>}
+        {response && <p className="text-green-600 mt-2">Registered successfully!</p>}
       </form>
     </div>
   );
